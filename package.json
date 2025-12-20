@@ -5,8 +5,8 @@
   "main": "src/app.js",
   "scripts": {
     "dev": "nodemon src/app.js",
-    "start": "node server.js",
-    "start:base": "node src/app.js",
+    "start": "node src/app.js",
+    "start:demo": "node server.js",
     "lint": "eslint ."
   },
   "engines": {
