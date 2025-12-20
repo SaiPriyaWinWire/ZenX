@@ -1,10 +1,15 @@
 const bcrypt = require('bcrypt');
 const { randomUUID } = require('crypto');
-const config = require('../config');
 const createLogger = require('../utils/logger');
 
 const logger = createLogger('user-service');
 const users = new Map();
+
+const getSeedDefaults = () => ({
+  email: process.env.PRIMARY_USER_EMAIL || 'admin@example.com',
+  password: process.env.PRIMARY_USER_PASSWORD || 'ChangeMe123!',
+  mfaSecret: process.env.PRIMARY_USER_MFA_SECRET || 'KVKFKRCPNZQUYMLXOVYDSQKJKZDTSRLD'
+});
 
 const normalizeEmail = (email) => email.trim().toLowerCase();
 
@@ -22,15 +27,16 @@ const createUserRecord = async ({ email, password, mfaSecret, id }) => {
 };
 
 const bootstrap = async () => {
-  const seedEmail = normalizeEmail(config.userSeed.email);
+  const seedConfig = getSeedDefaults();
+  const seedEmail = normalizeEmail(seedConfig.email);
   if (users.has(seedEmail)) {
     return;
   }
 
   const record = await createUserRecord({
     email: seedEmail,
-    password: config.userSeed.password,
-    mfaSecret: config.userSeed.mfaSecret,
+    password: seedConfig.password,
+    mfaSecret: seedConfig.mfaSecret,
     id: 'seed-user'
   });
 
@@ -65,7 +71,7 @@ const ensureUser = async (email, { mfaSecret } = {}) => {
   const record = await createUserRecord({
     email,
     password: '',
-    mfaSecret: mfaSecret || config.userSeed.mfaSecret
+    mfaSecret: mfaSecret || getSeedDefaults().mfaSecret
   });
   upsertUser(record);
   return record;
