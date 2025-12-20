@@ -9,21 +9,23 @@ const config = {
   env: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT || '3000', 10),
   sessionSecret: process.env.SESSION_SECRET,
-  userSeed: {
-    email: process.env.PRIMARY_USER_EMAIL || 'admin@example.com',
-    password: process.env.PRIMARY_USER_PASSWORD || 'ChangeMe123!',
-    mfaSecret: process.env.PRIMARY_USER_MFA_SECRET || 'KVKFKRCPNZQUYMLXOVYDSQKJKZDTSRLD'
-  },
-  azure: {
-    tenantId: process.env.AZURE_TENANT_ID,
-    clientId: process.env.AZURE_CLIENT_ID,
-    redirectUri: process.env.AZURE_REDIRECT_URI
+  azureAd: {
+    teamName: process.env.AZURE_AD_TEAM_NAME || 'ZenX',
+    clientId: process.env.AZURE_AD_CLIENT_ID || '1a08ab65-fc9b-430c-8852-b601414c7d0f',
+    tenantId: process.env.AZURE_AD_TENANT_ID || 'bdcfaa46-3f69-4dfd-b3f7-c582bdfbb820',
+    clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
+    redirectUri: process.env.AZURE_AD_REDIRECT_URI || 'http://localhost:3000/auth/azure/callback',
+    scopes: (process.env.AZURE_AD_SCOPES || 'openid profile email offline_access').split(' ')
   }
 };
 
 if (!config.sessionSecret) {
   // Generate a random secret for local/dev to avoid startup crashes
   config.sessionSecret = crypto.randomBytes(32).toString('hex');
+}
+
+if (!config.azureAd.clientSecret) {
+  throw new Error('AZURE_AD_CLIENT_SECRET must be set before starting the application.');
 }
 
 module.exports = config;

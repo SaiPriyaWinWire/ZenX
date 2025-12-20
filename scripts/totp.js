@@ -1,9 +1,13 @@
 const fs = require('fs');
 const path = require('path');
+const dotenv = require('dotenv');
+
+dotenv.config({ path: path.resolve(__dirname, '../.env'), override: false });
 try {
   const speakeasy = require('speakeasy');
+  const secret = process.env.PRIMARY_USER_MFA_SECRET || 'KVKFKRCPNZQUYMLXOVYDSQKJKZDTSRLD';
   const code = speakeasy.totp({
-    secret: 'KVKFKRCPNZQUYMLXOVYDSQKJKZDTSRLD',
+    secret,
     encoding: 'base32'
   });
   console.log(code);

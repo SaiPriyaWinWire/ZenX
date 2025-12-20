@@ -33,18 +33,13 @@
     </svg>
   </figure>
   <div class="landing-hero__body">
-    <p class="landing-hero__eyebrow">Sign In to Your Account</p>
     <h2 id="landing-hero-heading" class="landing-hero__heading">Access assigned test cases, execute audits, and submit reviewer insights in one place.</h2>
     <p class="landing-hero__text">Track the progress of your Technical Quality Audit tasks, verify remediation steps, and keep engineering stakeholders informed.</p>
-    <button type="button" class="landing-button landing-button--primary" data-open-modal data-role="reviewer">
-      <span>Sign In</span>
-      <span aria-hidden="true" class="landing-button__arrow"></span>
-    </button>
   </div>
 </section>
 
 <section class="landing-cards" aria-label="Role sign in">
-  <article class="landing-card">
+  <button type="button" class="landing-card is-active" data-role-card="reviewer" aria-pressed="true">
     <div class="landing-card__header">
       <div class="landing-card__icon" aria-hidden="true">
         <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -61,10 +56,9 @@
         <p class="landing-card__description">Access assigned test cases, execute audits, and submit actionable insights to improve delivery quality.</p>
       </div>
     </div>
-    <button type="button" class="landing-button landing-button--outline landing-card__cta" data-open-modal data-role="reviewer">Sign In</button>
-  </article>
+  </button>
 
-  <article class="landing-card">
+  <button type="button" class="landing-card" data-role-card="productOwner" aria-pressed="false">
     <div class="landing-card__header">
       <div class="landing-card__icon" aria-hidden="true">
         <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -83,10 +77,9 @@
         <p class="landing-card__description">Manage test cycles, monitor key metrics, approve releases, and track QA progress with targeted dashboards.</p>
       </div>
     </div>
-    <button type="button" class="landing-button landing-button--outline landing-card__cta" data-open-modal data-role="productOwner">Sign In</button>
-  </article>
+  </button>
 
-  <article class="landing-card">
+  <button type="button" class="landing-card" data-role-card="admin" aria-pressed="false">
     <div class="landing-card__header">
       <div class="landing-card__icon" aria-hidden="true">
         <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -103,111 +96,5 @@
         <p class="landing-card__description">Administer users, configure systems, generate reports, and maintain audit integrity across product lines.</p>
       </div>
     </div>
-    <button type="button" class="landing-button landing-button--outline landing-card__cta" data-open-modal data-role="admin">Sign In</button>
-  </article>
+  </button>
 </section>
-
-<div id="signin-modal" class="landing-modal" aria-hidden="true">
-  <div class="landing-modal__overlay" data-dismiss-modal></div>
-  <div class="landing-modal__panel" role="dialog" aria-modal="true" aria-labelledby="signin-heading">
-    <button type="button" id="modal-close" class="landing-modal__close" aria-label="Close sign in dialog"></button>
-    <h2 id="signin-heading" class="landing-modal__title">Sign in</h2>
-    <p class="landing-modal__subtitle">You are signing in as <span id="selected-role-label" class="landing-modal__role">Reviewer</span>.</p>
-    <form class="landing-form" method="post" action="/login" id="signin-form">
-      <input type="hidden" id="role" name="role" value="reviewer">
-      <label for="email">Work email</label>
-      <input id="email" name="email" type="email" placeholder="reviewer@example.com" required>
-      <label for="password">Password</label>
-      <input id="password" name="password" type="password" placeholder="TqaDemo@2025" required>
-      <button type="submit" class="landing-button landing-button--primary landing-button--full">
-        <span>Continue</span>
-        <span aria-hidden="true" class="landing-button__arrow"></span>
-      </button>
-    </form>
-    <script>
-      // When the modal is used for the reviewer role, submit to demo login to set session
-
-    const roleNames = {
-      reviewer: 'Reviewer',
-      productOwner: 'Product Owner',
-      admin: 'Admin'
-    };
-
-    let activeRole = 'reviewer';
-
-    const setRole = (role) => {
-      activeRole = roleNames[role] ? role : 'reviewer';
-      roleInput.value = activeRole;
-      roleLabel.textContent = roleNames[activeRole];
-    };
-
-    const openModal = (role = 'reviewer') => {
-      setRole(role);
-      modal.classList.remove('landing-modal--closing');
-      modal.classList.add('landing-modal--visible');
-      modal.setAttribute('aria-hidden', 'false');
-      setTimeout(() => {
-        emailInput.focus();
-      }, 100);
-    };
-
-    const closeModal = () => {
-      if (!modal.classList.contains('landing-modal--visible')) {
-        return;
-      }
-      modal.classList.add('landing-modal--closing');
-      setTimeout(() => {
-        modal.classList.remove('landing-modal--visible', 'landing-modal--closing');
-        modal.setAttribute('aria-hidden', 'true');
-      }, 220);
-    };
-
-    triggers.forEach((trigger) => {
-      trigger.addEventListener('click', () => {
-        const role = trigger.getAttribute('data-role');
-        openModal(role);
-      });
-    });
-
-    [closeBtn, overlay].forEach((el) => {
-      if (el) {
-        el.addEventListener('click', closeModal);
-      }
-    });
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && modal.classList.contains('landing-modal--visible')) {
-        closeModal();
-      }
-    });
-
-    setRole(activeRole);
-  })();
-</script>
-
-<script src="https://alcdn.msauth.net/browser/2.38.2/js/msal-browser.min.js"></script>
-<script>
-  (function(){
-    const azure = {
-      clientId: '<%= typeof azure !== "undefined" && azure.clientId ? azure.clientId : "" %>',
-      tenantId: '<%= typeof azure !== "undefined" && azure.tenantId ? azure.tenantId : "common" %>',
-      redirectUri: '<%= typeof azure !== "undefined" && azure.redirectUri ? azure.redirectUri : (typeof window !== "undefined" ? (window.location.origin + "/auth/redirect") : "") %>'
-    };
-    if (!azure.clientId) return;
-    const msalConfig = {
-      auth: {
-        clientId: azure.clientId,
-        authority: `https://login.microsoftonline.com/${azure.tenantId}`,
-        redirectUri: azure.redirectUri
-      },
-      cache: { cacheLocation: 'sessionStorage', storeAuthStateInCookie: true }
-    };
-    const msalInstance = new msal.PublicClientApplication(msalConfig);
-    const buttons = Array.from(document.querySelectorAll('[data-open-modal]'));
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        msalInstance.loginRedirect({ scopes: ['openid','profile','email'], prompt: 'select_account' });
-      });
-    });
-  })();
-</script>
