@@ -37,6 +37,27 @@ app.get('/api/whoami', (req, res) => {
   res.json({ email });
 });
 
+// In-memory risk config for demo (would normally be persisted)
+let riskConfig = {
+  architecture_weight: 25,
+  security_weight: 30,
+  performance_weight: 20,
+  code_quality_weight: 10,
+  release_weight: 15,
+  low_from: 0, low_to: 30, med_from: 31, med_to: 60, high_from: 61, high_to: 100
+};
+
+app.get('/api/admin/risk-config', (req, res) => {
+  res.json(riskConfig);
+});
+
+app.post('/api/admin/risk-config', (req, res) => {
+  const body = req.body || {};
+  // Merge and coerce to numbers where appropriate
+  Object.keys(riskConfig).forEach(k=>{ if (body[k] !== undefined) riskConfig[k] = isNaN(body[k]) ? body[k] : Number(body[k]) });
+  res.json({ ok: true, config: riskConfig });
+});
+
 app.listen(port, () => {
   console.log(`ZenX app listening at http://localhost:${port}`);
 });

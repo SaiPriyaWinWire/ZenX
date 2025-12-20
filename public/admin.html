@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ZenX — Risk Configuration</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .admin-wrap{max-width:980px;margin:20px auto;background:#fff;padding:20px;border-radius:8px;box-shadow:0 6px 20px rgba(15,23,42,0.06)}
+    .admin-header{display:flex;justify-content:space-between;align-items:center}
+    .admin-header h2{margin:0}
+    .grid-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+    .form-row{display:flex;align-items:center;gap:8px;padding:8px 6px;border-bottom:1px solid #f1f5f9}
+    label{min-width:160px;color:#374151}
+    select,input[type=number]{padding:6px;border:1px solid #ddd;border-radius:4px}
+    .full{grid-column:1/-1}
+    .btn.save{float:right}
+    .help{font-size:13px;color:#6b7280;margin-bottom:8px}
+  </style>
+</head>
+<body>
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <h2>Risk Configuration</h2>
+      <div>
+        <button id="saveBtn" class="btn primary">Save Changes</button>
+      </div>
+    </div>
+    <p class="help">Adjust thresholds and weights for each risk dimension.</p>
+    <form id="riskForm">
+      <div class="grid-form">
+        <div class="form-row">
+          <label>Architecture Weight (%)</label>
+          <input type="number" name="architecture_weight" min="0" max="100" value="25">
+        </div>
+        <div class="form-row">
+          <label>Security Weight (%)</label>
+          <input type="number" name="security_weight" min="0" max="100" value="30">
+        </div>
+        <div class="form-row">
+          <label>Performance Weight (%)</label>
+          <input type="number" name="performance_weight" min="0" max="100" value="20">
+        </div>
+        <div class="form-row">
+          <label>Code Quality Weight (%)</label>
+          <input type="number" name="code_quality_weight" min="0" max="100" value="10">
+        </div>
+        <div class="form-row">
+          <label>Release Readiness Weight (%)</label>
+          <input type="number" name="release_weight" min="0" max="100" value="15">
+        </div>
+
+        <div class="form-row full">
+          <label>Low Risk Range</label>
+          <select name="low_from"><option value="0">0</option></select>
+          <select name="low_to"><option value="30">30</option></select>
+        </div>
+        <div class="form-row full">
+          <label>Medium Risk Range</label>
+          <select name="med_from"><option value="31">31</option></select>
+          <select name="med_to"><option value="60">60</option></select>
+        </div>
+        <div class="form-row full">
+          <label>High Risk Range</label>
+          <select name="high_from"><option value="61">61</option></select>
+          <select name="high_to"><option value="100">100</option></select>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <script>
+    async function loadConfig(){
+      try{
+        const r = await fetch('/api/admin/risk-config');
+        if (!r.ok) return;
+        const j = await r.json();
+        const form = document.getElementById('riskForm');
+        if (!j) return;
+        Object.keys(j).forEach(k=>{
+          const el = form.elements[k];
+          if (el) el.value = j[k];
+        });
+      }catch(e){console.error(e)}
+    }
+    document.getElementById('saveBtn').addEventListener('click', async ()=>{
+      const form = document.getElementById('riskForm');
+      const data = {};
+      Array.from(form.elements).forEach(el=>{ if(el.name) data[el.name]=el.value });
+      const r = await fetch('/api/admin/risk-config',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)});
+      if (r.ok) alert('Saved'); else alert('Save failed');
+    });
+    loadConfig();
+  </script>
+</body>
+</html>
