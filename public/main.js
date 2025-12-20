@@ -73,7 +73,18 @@ loadDashboard();
 
 // Show signed-in user (demo)
 const signedEl = document.getElementById('signedInAs');
-if (signedEl) signedEl.textContent = 'Signed in as Ananta.bulusu@winwire.com';
+async function setSignedIn(){
+  if (!signedEl) return;
+  try{
+    const r = await fetch('/api/whoami');
+    if (!r.ok) throw new Error('whoami fetch failed');
+    const j = await r.json();
+    signedEl.textContent = `Signed in as ${j.email || 'Unknown'}`;
+  }catch(e){
+    signedEl.textContent = 'Signed in as Ananta.bulusu@winwire.com';
+  }
+}
+setSignedIn();
 
 document.getElementById('downloadReport').addEventListener('click', ()=>{
   alert('Download feature not implemented in this demo.');
