@@ -126,35 +126,6 @@
     </form>
     <script>
       // When the modal is used for the reviewer role, submit to demo login to set session
-      (function(){
-        const form = document.getElementById('signin-form');
-        const roleInput = document.getElementById('role');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        form.addEventListener('submit', function(ev){
-          const roleVal = roleInput ? roleInput.value.toLowerCase() : '';
-          if(roleVal === 'reviewer'){
-            // Use GET to demo login route to avoid form resubmission issues
-            form.setAttribute('action', '/login-demo');
-            form.setAttribute('method', 'get');
-            // allow submit to proceed
-          }
-        });
-      })();
-    </script>
-    <p class="landing-modal__helper">We&apos;ll tailor the workspace to your TQA responsibilities. Passwords are not required in this environment.</p>
-  </div>
-</div>
-
-<script>
-  (function () {
-    const modal = document.getElementById('signin-modal');
-    const closeBtn = document.getElementById('modal-close');
-    const overlay = modal.querySelector('[data-dismiss-modal]');
-    const roleInput = document.getElementById('role');
-    const roleLabel = document.getElementById('selected-role-label');
-    const emailInput = document.getElementById('email');
-    const triggers = Array.from(document.querySelectorAll('[data-open-modal]'));
 
     const roleNames = {
       reviewer: 'Reviewer',

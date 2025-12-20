@@ -17,96 +17,67 @@ const showLogin = (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { email = '', role: rawRole } = req.body;
+  const createLogger = require('../utils/logger');
+  const userService = require('../services/userService');
+  const mfaService = require('../services/mfaService');
+  const config = require('../config');
 
-  if (!email) {
-    req.flash('error', 'Email is required.');
-    return res.redirect('/login');
-  }
+  const logger = createLogger('auth-controller');
 
-  const normalizedEmail = String(email).trim().toLowerCase();
-  const allowedRoles = ['reviewer', 'productOwner', 'admin'];
-  const role = allowedRoles.includes(rawRole) ? rawRole : 'reviewer';
-  const user = await userService.ensureUser(normalizedEmail, { mfaSecret: config.userSeed.mfaSecret });
-
-  req.session.user = { ...userService.serializeForSession(user), role };
-  req.session.lastLoginAt = new Date().toISOString();
-  delete req.session.pendingUser;
-
-  req.flash('success', 'Signed in successfully.');
-  return res.redirect('/dashboard');
-};
-
-const showMfa = (req, res) => {
-  return res.redirect('/dashboard');
-};
-
-const verifyMfa = (req, res) => {
-  return res.redirect('/dashboard');
-};
-
-const azureRedirectView = (req, res) => {
-  res.locals.pageTitle = 'Signing in';
-  res.locals.azure = {
-    clientId: process.env.AZURE_CLIENT_ID || '',
-    tenantId: process.env.AZURE_TENANT_ID || 'common',
-    redirectUri: process.env.AZURE_REDIRECT_URI || `${req.protocol}://${req.get('host')}/auth/redirect`
+  const showLogin = (req, res) => {
+    res.locals.pageTitle = 'Sign in';
+    res.render('auth/login', { layout: 'layouts/landing' });
   };
-  res.render('auth/redirect', { layout: 'layouts/landing' });
-};
 
-const azureSession = async (req, res, next) => {
-  try {
-    const { idToken } = req.body || {};
-    const clientId = process.env.AZURE_CLIENT_ID;
-    const tenantId = process.env.AZURE_TENANT_ID || 'common';
+  const login = async (req, res) => {
+    const { email = '', role: rawRole } = req.body;
 
-    const payload = await verifyIdToken(idToken, { clientId, tenantId });
-    const email = (payload.preferred_username || payload.upn || payload.email || '').toLowerCase();
-    const roles = Array.isArray(payload.roles) ? payload.roles : [];
-
-    const roleMap = {
-      Reviewer: 'reviewer',
-      ProductOwner: 'productOwner',
-      Admin: 'admin'
-    };
-    let sessionRole = 'reviewer';
-    for (const r of roles) {
-      if (roleMap[r]) { sessionRole = roleMap[r]; break; }
+    if (!email) {
+      req.flash('error', 'Email is required.');
+      return res.redirect('/login');
     }
 
-    const user = await userService.ensureUser(email || 'unknown@example.com', { mfaSecret: config.userSeed.mfaSecret });
-    req.session.user = { ...userService.serializeForSession(user), role: sessionRole };
+    // Passwordless: ensure user exists and sign in immediately (no MFA)
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const allowedRoles = ['reviewer', 'productOwner', 'admin'];
+    const role = allowedRoles.includes(rawRole) ? rawRole : 'reviewer';
+    const user = await userService.ensureUser(normalizedEmail, { mfaSecret: config.userSeed.mfaSecret });
+
+    req.session.user = { ...userService.serializeForSession(user), role };
     req.session.lastLoginAt = new Date().toISOString();
+    delete req.session.pendingUser;
 
-    let redirectTo = '/dashboard';
+    req.flash('success', 'Signed in successfully.');
+    return res.redirect('/dashboard');
+  };
+
+  const showMfa = (req, res) => {
+    // MFA disabled: redirect to dashboard
+    return res.redirect('/dashboard');
+  };
+
+  const verifyMfa = (req, res) => {
+    // MFA disabled: redirect to dashboard
+    return res.redirect('/dashboard');
+  };
+
+  const logout = (req, res, next) => {
+    // Regenerate the session to log out safely and still allow flash messaging
+    req.session.regenerate((err) => {
+      if (err) {
+        logger.error('Failed to regenerate session on logout', { error: err.message });
+        return next(err);
+      }
+      req.flash('info', 'Signed out successfully.');
+      return res.redirect('/login');
+    });
+  };
+
+  module.exports = {
+    showLogin,
+    login,
+    showMfa,
+    verifyMfa,
+    logout
+  };
     if (sessionRole === 'reviewer') redirectTo = '/reviewers';
-    // Extend as routes are added for productOwner/admin
-
-    return res.json({ ok: true, redirectTo });
-  } catch (err) {
-    logger.error('Azure session establishment failed', { error: err.message });
-    return res.status(401).json({ ok: false, error: 'Unauthorized' });
-  }
-};
-
-const logout = (req, res, next) => {
-  req.session.regenerate((err) => {
-    if (err) {
-      logger.error('Failed to regenerate session on logout', { error: err.message });
-      return next(err);
-    }
-    req.flash('info', 'Signed out successfully.');
-    return res.redirect('/login');
-  });
-};
-
-module.exports = {
-  showLogin,
-  login,
-  showMfa,
-  verifyMfa,
-  azureRedirectView,
-  azureSession,
-  logout
-};
