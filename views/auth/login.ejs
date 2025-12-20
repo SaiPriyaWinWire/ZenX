@@ -218,9 +218,9 @@
 <script>
   (function(){
     const azure = {
-      clientId: '<%= azure && azure.clientId ? azure.clientId : '' %>',
-      tenantId: '<%= azure && azure.tenantId ? azure.tenantId : 'common' %>',
-      redirectUri: '<%= azure && azure.redirectUri ? azure.redirectUri : (typeof window !== 'undefined' ? (window.location.origin + '/auth/redirect') : '') %>'
+      clientId: '<%= typeof azure !== "undefined" && azure.clientId ? azure.clientId : "" %>',
+      tenantId: '<%= typeof azure !== "undefined" && azure.tenantId ? azure.tenantId : "common" %>',
+      redirectUri: '<%= typeof azure !== "undefined" && azure.redirectUri ? azure.redirectUri : (typeof window !== "undefined" ? (window.location.origin + "/auth/redirect") : "") %>'
     };
     if (!azure.clientId) return;
     const msalConfig = {

@@ -10,11 +10,8 @@ router.use(authRoutes);
 router.use(dashboardRoutes);
 router.use(tqaRoutes);
 
-// Login page (render landing login view)
-router.get('/login', (req, res) => {
-  res.locals.pageTitle = 'Sign In';
-  res.render('auth/login', { layout: 'layouts/landing' });
-});
+// Note: /login is handled in auth routes (injects Azure locals). Remove
+// duplicate route here to avoid rendering without required variables.
 
 // Demo login: accept sample Reviewer credentials and set session
 router.post('/login-demo', (req, res) => {
