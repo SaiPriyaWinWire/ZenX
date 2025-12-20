@@ -2,18 +2,11 @@
 const userService = require('../services/userService');
 const mfaService = require('../services/mfaService');
 const config = require('../config');
-const { verifyIdToken } = require('../services/azureAdService');
 
 const logger = createLogger('auth-controller');
 
 const showLogin = (req, res) => {
   res.locals.pageTitle = 'Sign in';
-  res.locals.azure = {
-    clientId: process.env.AZURE_CLIENT_ID || '',
-    tenantId: process.env.AZURE_TENANT_ID || 'common',
-    redirectUri: process.env.AZURE_REDIRECT_URI || `${req.protocol}://${req.get('host')}/auth/redirect`
-  };
-  res.render('auth/login', { layout: 'layouts/landing' });
 };
 
 const login = async (req, res) => {
