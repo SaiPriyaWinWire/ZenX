@@ -21,7 +21,8 @@ app.set('layout', 'layouts/main');
 app.use(expressLayouts);
 app.use(helmet());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.resolve(__dirname, '../public')));
+// Serve static assets but do NOT serve index.html at '/'
+app.use(express.static(path.resolve(__dirname, '../public'), { index: false }));
 
 app.use(session({
   secret: config.sessionSecret,

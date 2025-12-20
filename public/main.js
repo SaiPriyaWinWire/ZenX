@@ -1,6 +1,8 @@
 async function loadDashboard(){
   try{
-    const res = await fetch('/api/dashboard');
+    const isReviewerDemo = window.location && window.location.pathname && window.location.pathname.startsWith('/reviewers');
+    const apiPath = isReviewerDemo ? '/reviewers/api/dashboard' : '/api/dashboard';
+    const res = await fetch(apiPath);
     const data = await res.json();
 
     document.getElementById('pending').textContent = data.quickStats.pending;
