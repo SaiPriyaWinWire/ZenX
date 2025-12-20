@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ZenX — AI TQA Review Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>AI-Powered TQA Review Management System</h1>
+  </header>
+
+  <main class="grid">
+    <section class="card" id="quick-stats">
+      <div class="card-header hdr-dashboard">
+        <h2>Dashboard</h2>
+        <div class="card-icons">
+          <button class="icon-btn" aria-label="settings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09c.67 0 1.24-.38 1.51-1a1.65 1.65 0 0 0-.33-1.82L3.3 4.7A2 2 0 0 1 6.13 1.87l.06.06A1.65 1.65 0 0 0 8 2.26 1.65 1.65 0 0 0 9.51 3H9.6a2 2 0 0 1 4 0h.09c.67 0 1.24.38 1.51 1 .22.58.78 1 .)" stroke="currentColor" stroke-width="0"/></svg>
+          </button>
+          <button class="icon-btn" aria-label="close">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="stats">
+          <div class="stat"><span id="pending">0</span><div>Pending</div></div>
+          <div class="stat"><span id="inProgress">0</span><div>In Progress</div></div>
+          <div class="stat"><span id="highRisk">0</span><div>High Risk</div></div>
+          <div class="stat"><span id="ready">0</span><div>Ready</div></div>
+        </div>
+        <h3>Recent Reviews</h3>
+        <ul id="recentReviews" class="list"></ul>
+      </div>
+    </section>
+
+    <section class="card" id="project-review">
+      <div class="card-header hdr-project">
+        <h2>Project Alpha Review</h2>
+        <div class="card-icons">
+          <button class="icon-btn" aria-label="settings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="icon-btn" aria-label="close">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <h3>AI Checklist Analysis</h3>
+        <div class="checklist-wrap">
+        <div class="checklist">
+          <div class="check-item"><span>Architecture</span><span class="value" id="pr-arch">0</span><span class="status" id="pr-arch-status"></span></div>
+          <div class="check-item"><span>Security</span><span class="value" id="pr-sec">0</span><span class="status" id="pr-sec-status"></span></div>
+          <div class="check-item"><span>Performance</span><span class="value" id="pr-perf">0</span><span class="status" id="pr-perf-status"></span></div>
+          <div class="check-item"><span>Code Quality</span><span class="value" id="pr-cq">0</span><span class="status" id="pr-cq-status"></span></div>
+          <div class="check-item"><span>Release Readiness</span><span class="value" id="pr-rr">0</span><span class="status" id="pr-rr-status"></span></div>
+        </div>
+        <div class="gauge-wrap">
+          <div class="gauge" id="overallGauge">
+            <div class="gauge-inner">
+              <div class="gauge-value" id="gaugeValue">0</div>
+              <div class="gauge-label">Overall Risk</div>
+            </div>
+          </div>
+          <button class="btn primary" id="overallBtn">Overall Risk</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="risk-summary">
+      <div class="card-header hdr-risk">
+        <h2>AI Risk Assessment</h2>
+        <div class="card-icons">
+          <button class="icon-btn" aria-label="settings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="icon-btn" aria-label="close">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="summary-row">
+          <div class="label">Total Risk Score</div>
+          <div class="score" id="totalRisk">0</div>
+        </div>
+        <div class="summary-row">
+          <div class="label">Overall Risk Level</div>
+          <div class="level" id="overallLevel">LOW</div>
+        </div>
+        <div class="summary-row">
+          <div class="label">Release Recommendation</div>
+          <div><button class="btn reject" id="releaseRec">NOT READY</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="approval">
+      <div class="card-header hdr-approval">
+        <h2>Approval & Decision</h2>
+        <div class="card-icons">
+          <button class="icon-btn" aria-label="settings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="icon-btn" aria-label="close">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="actions">
+          <button class="btn approve">Approve</button>
+          <button class="btn change">Request Changes</button>
+          <button class="btn reject">Reject</button>
+        </div>
+        <textarea id="comments" placeholder="Comments..."></textarea>
+        <button id="downloadReport" class="btn primary">Download Report</button>
+      </div>
+    </section>
+
+    <section class="card" id="report">
+      <div class="card-header hdr-report">
+        <h2>Project Alpha — Final Review Report</h2>
+        <div class="card-icons">
+          <button class="icon-btn" aria-label="settings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="icon-btn" aria-label="close">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="risk-label">Risk Summary: <span id="riskLabel">High Risk</span></div>
+        <h3>Key Findings</h3>
+        <ul id="findings" class="list"></ul>
+        <h3>Recommendations</h3>
+        <ul id="recs" class="list"></ul>
+      </div>
+    </section>
+
+    <section class="card" id="logs">
+      <div class="card-header hdr-logs">
+        <h2>Audit & Activity Logs</h2>
+        <div class="card-icons"><span class="icon">⚙</span><span class="icon">✖</span></div>
+      </div>
+      <div class="card-body">
+        <table id="logsTable">
+          <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Details</th></tr></thead>
+          <tbody>
+            <tr><td>21.01.2020 16:07</td><td>Admin</td><td>Checklist Generated</td><td>-</td></tr>
+            <tr><td>21.01.2020 16:07</td><td>Admin</td><td>Risk Analysis Completed</td><td>-</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>
