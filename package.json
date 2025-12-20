@@ -1,11 +1,12 @@
 {
-  "name": "zenx-base-template",
-  "version": "0.1.0",
-  "description": "Base Node.js template with MFA login and asset pipeline",
+  "name": "zenx",
+  "version": "0.2.0",
+  "description": "ZenX - Base template and demo webapp for TQA review management",
   "main": "src/app.js",
   "scripts": {
     "dev": "nodemon src/app.js",
-    "start": "node src/app.js",
+    "start": "node server.js",
+    "start:base": "node src/app.js",
     "lint": "eslint ."
   },
   "engines": {

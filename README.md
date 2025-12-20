@@ -12,40 +12,87 @@ Starter Node.js/Express application for an AI-powered TQA review management syst
 
 ## Getting Started
 
+# ZenX
+
+This repository contains the ZenX base template (a Node.js/Express starter app)
+and a small demo webapp for the AI-powered TQA Review Management dashboard.
+
+This README covers both the base template and the demo so contributors can run
+the demo quickly and also understand the intended larger project layout.
+
+## Overview
+
+- The **Base Template** provides an Express + EJS application scaffold with
+	session-backed authentication, TOTP MFA helpers, and an asset pipeline.
+- The **Demo Webapp** is a minimal Node/Express static server that implements a
+	simplified TQA dashboard UI (used for quick design iteration and testing).
+
+## Getting Started
+
 1. Install dependencies
 
-	```bash
-	npm install
-	```
+		```powershell
+		npm install
+		```
 
-2. Copy the sample environment file and adjust values
+2. Copy the sample environment and adjust values (for the base template)
 
-	```bash
-	cp .env.example .env
-	```
+		```powershell
+		cp .env.example .env
+		```
 
-	- `SESSION_SECRET` must be a long random string.
-	- Update the seed user credentials (`PRIMARY_USER_*`) to match your first account.
+		- `SESSION_SECRET` must be a long random string.
+		- Update any `PRIMARY_USER_*` seed credentials if you plan to use the base
+			template's auth flow.
 
-3. Launch the dev server
+3. Run the demo webapp (quick)
 
-	```bash
-	npm run dev
-	```
+		```powershell
+		# starts the demo server which serves the static dashboard at :3000
+		npm start
+		```
 
-	Visit http://localhost:3000 and sign in with the seed user. Complete the MFA step with the TOTP secret you set (the default example secret works with Google Authenticator or similar apps).
+		Open http://localhost:3000 to view the demo dashboard.
 
-## Project Layout
+4. Run the base-template app (development)
 
-- Server entry point: [src/app.js](src/app.js)
-- Configuration loader: [src/config/index.js](src/config/index.js)
-- Authentication flow: [src/controllers/authController.js](src/controllers/authController.js)
-- MFA helpers: [src/services/mfaService.js](src/services/mfaService.js)
-- Shared styling assets: [public/css/main.css](public/css/main.css)
-- Views and layout: [views](views)
+		```powershell
+		npm run dev
+		```
 
-## Next Steps
+		The base template application uses `src/app.js` as the entry point and may
+		require additional env settings from `.env` to enable auth and MFA flows.
 
-- Replace the in-memory user store with your database of choice.
-- Add rate limiting, CSRF protection, and production-grade logging.
-- Extend the dashboard modules or wire the UI to real AI-driven risk analysis services.
+## Files Added / Demo Notes
+
+- `server.js` — demo Express server and `/api/dashboard` endpoint (demo data)
+- `public/index.html` — demo frontend markup
+- `public/styles.css` — demo styling
+- `public/main.js` — demo client-side data wiring
+
+The demo is intentionally small and self-contained. Use it to prototype UI
+changes; when ready, port components or API wiring into the base-template code
+under `src/`.
+
+## Project Layout (Base Template)
+
+- Server entry point: `src/app.js`
+- Configuration loader: `src/config/index.js`
+- Authentication flow: `src/controllers/authController.js`
+- MFA helpers: `src/services/mfaService.js`
+- Shared styling assets: `public/css/main.css`
+- Views and layout: `views`
+
+## Recommendations
+
+- Add a `.gitignore` ignoring `node_modules/` (if not present) and remove
+	committed `node_modules` from the repo to keep history clean.
+- Regenerate `package-lock.json` after finalizing `package.json` by running
+
+		```powershell
+		npm install
+		```
+
+## License
+
+MIT
