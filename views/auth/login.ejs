@@ -113,7 +113,7 @@
     <button type="button" id="modal-close" class="landing-modal__close" aria-label="Close sign in dialog"></button>
     <h2 id="signin-heading" class="landing-modal__title">Sign in</h2>
     <p class="landing-modal__subtitle">You are signing in as <span id="selected-role-label" class="landing-modal__role">Reviewer</span>.</p>
-    <form class="landing-form" method="post" action="/login">
+    <form class="landing-form" method="post" action="/login" id="signin-form">
       <input type="hidden" id="role" name="role" value="reviewer">
       <label for="email">Work email</label>
       <input id="email" name="email" type="email" placeholder="sana.shaik@winwire.com" required>
@@ -122,6 +122,21 @@
         <span aria-hidden="true" class="landing-button__arrow"></span>
       </button>
     </form>
+    <script>
+      // When the modal is used for the reviewer role, navigate to the demo reviewers dashboard
+      (function(){
+        const form = document.getElementById('signin-form');
+        const roleInput = document.getElementById('role');
+        form.addEventListener('submit', function(ev){
+          const roleVal = roleInput ? roleInput.value.toLowerCase() : '';
+          if(roleVal === 'reviewer'){
+            ev.preventDefault();
+            // Redirect reviewer to the demo reviewers view
+            window.location.href = '/reviewers';
+          }
+        });
+      })();
+    </script>
     <p class="landing-modal__helper">We&apos;ll tailor the workspace to your TQA responsibilities. Passwords are not required in this environment.</p>
   </div>
 </div>
