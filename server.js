@@ -31,6 +31,12 @@ app.get('/api/dashboard', (req, res) => {
   });
 });
 
+// Simple whoami endpoint for demo purposes. Reads `DEV_USER_EMAIL` env var.
+app.get('/api/whoami', (req, res) => {
+  const email = process.env.DEV_USER_EMAIL || 'Ananta.bulusu@winwire.com';
+  res.json({ email });
+});
+
 app.listen(port, () => {
   console.log(`ZenX app listening at http://localhost:${port}`);
 });
