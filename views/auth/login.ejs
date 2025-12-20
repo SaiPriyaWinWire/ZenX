@@ -116,23 +116,27 @@
     <form class="landing-form" method="post" action="/login" id="signin-form">
       <input type="hidden" id="role" name="role" value="reviewer">
       <label for="email">Work email</label>
-      <input id="email" name="email" type="email" placeholder="sana.shaik@winwire.com" required>
+      <input id="email" name="email" type="email" placeholder="reviewer@example.com" required>
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" placeholder="TqaDemo@2025" required>
       <button type="submit" class="landing-button landing-button--primary landing-button--full">
         <span>Continue</span>
         <span aria-hidden="true" class="landing-button__arrow"></span>
       </button>
     </form>
     <script>
-      // When the modal is used for the reviewer role, navigate to the demo reviewers dashboard
+      // When the modal is used for the reviewer role, submit to demo login to set session
       (function(){
         const form = document.getElementById('signin-form');
         const roleInput = document.getElementById('role');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
         form.addEventListener('submit', function(ev){
           const roleVal = roleInput ? roleInput.value.toLowerCase() : '';
           if(roleVal === 'reviewer'){
-            ev.preventDefault();
-            // Redirect reviewer to the demo reviewers view
-            window.location.href = '/reviewers';
+            // Post to demo login route with email/password to set session
+            form.setAttribute('action', '/login-demo');
+            // allow submit to proceed
           }
         });
       })();

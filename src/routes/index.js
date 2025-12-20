@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const authRoutes = require('./auth');
 const dashboardRoutes = require('./dashboard');
 const tqaRoutes = require('./tqa');
@@ -8,6 +9,20 @@ const router = express.Router();
 router.use(authRoutes);
 router.use(dashboardRoutes);
 router.use(tqaRoutes);
+
+// Demo login: accept sample Reviewer credentials and set session
+router.post('/login-demo', (req, res) => {
+  const { email, password, role } = req.body || {};
+  const okEmail = (email || '').toLowerCase() === 'reviewer@example.com';
+  const okPass = (password || '') === 'TqaDemo@2025';
+  const isReviewer = (role || '').toLowerCase() === 'reviewer';
+  if (okEmail && okPass && isReviewer) {
+    req.session.user = { email, role: 'Reviewer' };
+    return res.redirect('/reviewers');
+  }
+  req.flash('error', 'Invalid credentials for Reviewer demo');
+  return res.redirect('/login');
+});
 
 // Demo reviewers route: serve demo static assets and API under /reviewers
 router.get('/reviewers', (req, res) => {
