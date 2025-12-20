@@ -134,8 +134,9 @@
         form.addEventListener('submit', function(ev){
           const roleVal = roleInput ? roleInput.value.toLowerCase() : '';
           if(roleVal === 'reviewer'){
-            // Post to demo login route with email/password to set session
+            // Use GET to demo login route to avoid form resubmission issues
             form.setAttribute('action', '/login-demo');
+            form.setAttribute('method', 'get');
             // allow submit to proceed
           }
         });

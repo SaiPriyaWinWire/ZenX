@@ -30,6 +30,20 @@ router.post('/login-demo', (req, res) => {
   return res.redirect('/login');
 });
 
+// Also support GET to avoid browser's form resubmission refresh issue
+router.get('/login-demo', (req, res) => {
+  const { email, password, role } = req.query || {};
+  const okEmail = (email || '').toLowerCase() === 'reviewer@example.com';
+  const okPass = (password || '') === 'TqaDemo@2025';
+  const isReviewer = (role || '').toLowerCase() === 'reviewer';
+  if (okEmail && okPass && isReviewer) {
+    req.session.user = { email, role: 'Reviewer' };
+    return res.redirect('/reviewers');
+  }
+  req.flash('error', 'Invalid credentials for Reviewer demo');
+  return res.redirect('/login');
+});
+
 // Demo reviewers route: serve demo static assets and API under /reviewers
 router.get('/reviewers', (req, res) => {
   // Serve the demo index (public/demo/index.html)
