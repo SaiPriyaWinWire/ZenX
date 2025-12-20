@@ -10,6 +10,12 @@ router.use(authRoutes);
 router.use(dashboardRoutes);
 router.use(tqaRoutes);
 
+// Login page (render landing login view)
+router.get('/login', (req, res) => {
+  res.locals.pageTitle = 'Sign In';
+  res.render('auth/login', { layout: 'layouts/landing' });
+});
+
 // Demo login: accept sample Reviewer credentials and set session
 router.post('/login-demo', (req, res) => {
   const { email, password, role } = req.body || {};
