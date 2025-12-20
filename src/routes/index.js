@@ -44,7 +44,7 @@ router.get('/login-demo', (req, res) => {
 });
 
 // Demo reviewers route: serve demo static assets and API under /reviewers
-router.get('/reviewers', ensureAuthenticated, ensureRole('reviewer'), (req, res) => {
+router.get('/reviewers', (req, res) => {
   res.sendFile('demo/index.html', { root: path.resolve(__dirname, '../../public') });
 });
 
