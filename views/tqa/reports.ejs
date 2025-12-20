@@ -1,0 +1,22 @@
+<section class="page-header">
+  <h1 class="page-header__title">Project Alpha — Final Review Report</h1>
+</section>
+
+<section class="panel">
+  <div style="margin-bottom:1rem;">
+    <strong>Risk Summary:</strong> <span class="badge badge--danger"><%= risk %></span>
+  </div>
+  <h2 class="panel__title">Key Findings</h2>
+  <ul class="timeline">
+    <% findings.forEach((f)=> { %>
+      <li><%= f %></li>
+    <% }) %>
+  </ul>
+
+  <h2 class="panel__title" style="margin-top:1rem;">Recommendations</h2>
+  <ul class="timeline">
+    <% recommendations.forEach((r)=> { %>
+      <li><%= r %></li>
+    <% }) %>
+  </ul>
+</section>

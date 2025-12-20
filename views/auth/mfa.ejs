@@ -1,0 +1,15 @@
+<section class="card card--narrow">
+  <h1 class="card__title">Verify it’s you</h1>
+  <p class="card__subtitle">Enter the 6-digit code from your authenticator app for <strong><%= email %></strong>.</p>
+
+  <form class="form" method="post" action="/mfa">
+    <div class="form__group">
+      <label class="form__label" for="token">One-time code</label>
+      <input class="form__input" type="text" id="token" name="token" inputmode="numeric" pattern="[0-9]{6}" placeholder="123456" minlength="6" maxlength="6" required autofocus>
+    </div>
+
+    <button class="button button--primary form__submit" type="submit">Verify and continue</button>
+  </form>
+
+  <p class="card__helper">Codes refresh every 30 seconds. Having trouble? Request a reset with an admin.</p>
+</section>

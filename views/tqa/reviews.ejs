@@ -1,0 +1,42 @@
+<section class="page-header">
+  <h1 class="page-header__title">Project Alpha Review</h1>
+</section>
+
+<div class="tabs">
+  <span class="tab tab--active">Artifacts</span>
+  <span class="tab">Risk Scores</span>
+  <span class="tab">Approval</span>
+  <span class="tab">Report</span>
+</div>
+
+<section class="grid">
+  <article class="panel">
+    <header class="panel__header">
+      <h2 class="panel__title">AI Checklist Analysis</h2>
+    </header>
+    <table class="table">
+      <thead><tr><th>Criteria</th><th>Score</th><th>Level</th></tr></thead>
+      <tbody>
+        <% checklist.forEach((c)=> { %>
+          <tr>
+            <td><%= c.label %></td>
+            <td><%= c.score %></td>
+            <td><%= c.level %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </article>
+  <article class="panel">
+    <header class="panel__header">
+      <h2 class="panel__title">Overall Risk</h2>
+    </header>
+    <div class="risk-summary">
+      <div class="risk-summary__score">High</div>
+      <div class="risk-summary__details">
+        <p>Analysis in progress…</p>
+        <button class="button button--secondary" type="button">Overall Risk High</button>
+      </div>
+    </div>
+  </article>
+</section>

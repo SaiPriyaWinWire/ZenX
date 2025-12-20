@@ -1,0 +1,4 @@
+<% const scriptAssets = typeof getScripts === 'function' ? getScripts() : (scripts || []); %>
+<% scriptAssets.forEach((src) => { %>
+<script src="<%= src %>" defer></script>
+<% }); %>

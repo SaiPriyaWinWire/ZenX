@@ -1,0 +1,11 @@
+<% if (flash) { %>
+  <% Object.entries(flash).forEach(([type, messages]) => { %>
+    <% if (Array.isArray(messages)) { %>
+      <% messages.filter(Boolean).forEach((message) => { %>
+        <div class="alert alert--<%= type %>" role="status">
+          <span><%= message %></span>
+        </div>
+      <% }); %>
+    <% } %>
+  <% }); %>
+<% } %>

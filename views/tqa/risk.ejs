@@ -1,0 +1,33 @@
+<section class="page-header">
+  <h1 class="page-header__title">AI Risk Assessment</h1>
+</section>
+
+<section class="grid">
+  <article class="panel">
+    <header class="panel__header">
+      <h2 class="panel__title">Risk Scores</h2>
+    </header>
+    <table class="table">
+      <thead><tr><th>Area</th><th>Score</th><th>Level</th></tr></thead>
+      <tbody>
+        <% scores.forEach((s)=> { %>
+          <tr><td><%= s.label %></td><td><%= s.score %></td><td><%= s.level %></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </article>
+  <article class="panel">
+    <header class="panel__header">
+      <h2 class="panel__title">Risk Summary</h2>
+    </header>
+    <div class="risk-summary">
+      <div class="risk-summary__score"><%= total %></div>
+      <div class="risk-summary__details">
+        <p>Overall Risk Level</p>
+        <span class="badge badge--danger"><%= summary %></span>
+        <p>Release Recommendation</p>
+        <button class="button button--primary" type="button"><%= recommendation %></button>
+      </div>
+    </div>
+  </article>
+</section>

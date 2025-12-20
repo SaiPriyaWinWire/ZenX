@@ -1,0 +1,16 @@
+<section class="page-header">
+  <h1 class="page-header__title">Audit & Activity Logs</h1>
+</section>
+
+<section class="panel">
+  <table class="table">
+    <thead>
+      <tr><th>Timestamp</th><th>User</th><th>Action</th><th>Details</th></tr>
+    </thead>
+    <tbody>
+      <% logs.forEach((l)=> { %>
+        <tr><td><%= l.ts %></td><td><%= l.user %></td><td><%= l.action %></td><td><%= l.details %></td></tr>
+      <% }) %>
+    </tbody>
+  </table>
+</section>

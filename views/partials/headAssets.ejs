@@ -1,0 +1,5 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<% const stylesheets = typeof getStyles === 'function' ? getStyles() : (styles || []); %>
+<% stylesheets.forEach((href) => { %>
+<link rel="stylesheet" href="<%= href %>">
+<% }); %>
