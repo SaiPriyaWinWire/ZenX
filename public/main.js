@@ -71,6 +71,10 @@ async function loadDashboard(){
 
 loadDashboard();
 
+// Show signed-in user (demo)
+const signedEl = document.getElementById('signedInAs');
+if (signedEl) signedEl.textContent = 'Signed in as Ananta.bulusu@winwire.com';
+
 document.getElementById('downloadReport').addEventListener('click', ()=>{
   alert('Download feature not implemented in this demo.');
 });
