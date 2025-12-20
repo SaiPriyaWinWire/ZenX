@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle ? pageTitle + ' | ' : '' %>Technical Quality Audit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%232f66f5'/><text x='16' y='21' text-anchor='middle' font-size='14' fill='white'>QA</text></svg>">
+  <%- include('../partials/headAssets') %>
+</head>
+<body class="landing-body">
+  <header class="landing-header" role="banner">
+    <div class="landing-header__brand">
+      <span class="landing-header__logo">QA</span>
+      <span>Technical Quality Audit</span>
+    </div>
+  </header>
+
+  <main class="landing-content" role="main">
+    <%- include('../partials/flash') %>
+    <%- body %>
+  </main>
+
+  <%- include('../partials/scriptAssets') %>
+</body>
+</html>

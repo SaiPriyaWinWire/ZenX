@@ -7,7 +7,7 @@ const logger = createLogger('auth-controller');
 
 const showLogin = (req, res) => {
   res.locals.pageTitle = 'Sign in';
-  res.render('auth/login', { layout: 'layouts/main' });
+  res.render('auth/login', { layout: 'layouts/landing' });
 };
 
 const login = async (req, res) => {
