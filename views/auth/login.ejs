@@ -1,4 +1,4 @@
-<section class="landing-hero" role="region" aria-labelledby="landing-hero-heading">
+﻿<section class="landing-hero" role="region" aria-labelledby="landing-hero-heading">
   <figure class="landing-hero__media" aria-hidden="true">
     <svg class="landing-hero__svg" viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -211,5 +211,32 @@
     });
 
     setRole(activeRole);
+  })();
+</script>
+
+<script src="https://alcdn.msauth.net/browser/2.38.2/js/msal-browser.min.js"></script>
+<script>
+  (function(){
+    const azure = {
+      clientId: '<%= azure && azure.clientId ? azure.clientId : '' %>',
+      tenantId: '<%= azure && azure.tenantId ? azure.tenantId : 'common' %>',
+      redirectUri: '<%= azure && azure.redirectUri ? azure.redirectUri : (typeof window !== 'undefined' ? (window.location.origin + '/auth/redirect') : '') %>'
+    };
+    if (!azure.clientId) return;
+    const msalConfig = {
+      auth: {
+        clientId: azure.clientId,
+        authority: `https://login.microsoftonline.com/${azure.tenantId}`,
+        redirectUri: azure.redirectUri
+      },
+      cache: { cacheLocation: 'sessionStorage', storeAuthStateInCookie: true }
+    };
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+    const buttons = Array.from(document.querySelectorAll('[data-open-modal]'));
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        msalInstance.loginRedirect({ scopes: ['openid','profile','email'], prompt: 'select_account' });
+      });
+    });
   })();
 </script>

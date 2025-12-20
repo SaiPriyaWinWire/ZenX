@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Signing in</title>
+  <script src="https://alcdn.msauth.net/browser/2.38.2/js/msal-browser.min.js"></script>
+</head>
+<body>
+  <script>
+    (async function(){
+      const azure = {
+        clientId: '<%= azure.clientId %>',
+        tenantId: '<%= azure.tenantId %>',
+        redirectUri: '<%= azure.redirectUri %>'
+      };
+      const msalConfig = {
+        auth: {
+          clientId: azure.clientId,
+          authority: `https://login.microsoftonline.com/${azure.tenantId}`,
+          redirectUri: azure.redirectUri
+        },
+        cache: { cacheLocation: 'sessionStorage', storeAuthStateInCookie: true }
+      };
+      const msalInstance = new msal.PublicClientApplication(msalConfig);
+      try {
+        const response = await msalInstance.handleRedirectPromise();
+        if (response && response.idToken) {
+          const res = await fetch('/auth/session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken: response.idToken })
+          });
+          const data = await res.json();
+          if (data.ok && data.redirectTo) {
+            window.location.assign(data.redirectTo);
+            return;
+          }
+        }
+        // Fallback: go to login
+        window.location.assign('/login');
+      } catch (e) {
+        console.error('Redirect handling failed', e);
+        window.location.assign('/login');
+      }
+    })();
+  </script>
+</body>
+</html>

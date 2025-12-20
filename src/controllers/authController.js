@@ -1,12 +1,18 @@
-const createLogger = require('../utils/logger');
+﻿const createLogger = require('../utils/logger');
 const userService = require('../services/userService');
 const mfaService = require('../services/mfaService');
 const config = require('../config');
+const { verifyIdToken } = require('../services/azureAdService');
 
 const logger = createLogger('auth-controller');
 
 const showLogin = (req, res) => {
   res.locals.pageTitle = 'Sign in';
+  res.locals.azure = {
+    clientId: process.env.AZURE_CLIENT_ID || '',
+    tenantId: process.env.AZURE_TENANT_ID || 'common',
+    redirectUri: process.env.AZURE_REDIRECT_URI || `${req.protocol}://${req.get('host')}/auth/redirect`
+  };
   res.render('auth/login', { layout: 'layouts/landing' });
 };
 
@@ -18,7 +24,6 @@ const login = async (req, res) => {
     return res.redirect('/login');
   }
 
-  // Passwordless: ensure user exists and sign in immediately (no MFA)
   const normalizedEmail = String(email).trim().toLowerCase();
   const allowedRoles = ['reviewer', 'productOwner', 'admin'];
   const role = allowedRoles.includes(rawRole) ? rawRole : 'reviewer';
@@ -33,17 +38,59 @@ const login = async (req, res) => {
 };
 
 const showMfa = (req, res) => {
-  // MFA disabled: redirect to dashboard
   return res.redirect('/dashboard');
 };
 
 const verifyMfa = (req, res) => {
-  // MFA disabled: redirect to dashboard
   return res.redirect('/dashboard');
 };
 
+const azureRedirectView = (req, res) => {
+  res.locals.pageTitle = 'Signing in';
+  res.locals.azure = {
+    clientId: process.env.AZURE_CLIENT_ID || '',
+    tenantId: process.env.AZURE_TENANT_ID || 'common',
+    redirectUri: process.env.AZURE_REDIRECT_URI || `${req.protocol}://${req.get('host')}/auth/redirect`
+  };
+  res.render('auth/redirect', { layout: 'layouts/landing' });
+};
+
+const azureSession = async (req, res, next) => {
+  try {
+    const { idToken } = req.body || {};
+    const clientId = process.env.AZURE_CLIENT_ID;
+    const tenantId = process.env.AZURE_TENANT_ID || 'common';
+
+    const payload = await verifyIdToken(idToken, { clientId, tenantId });
+    const email = (payload.preferred_username || payload.upn || payload.email || '').toLowerCase();
+    const roles = Array.isArray(payload.roles) ? payload.roles : [];
+
+    const roleMap = {
+      Reviewer: 'reviewer',
+      ProductOwner: 'productOwner',
+      Admin: 'admin'
+    };
+    let sessionRole = 'reviewer';
+    for (const r of roles) {
+      if (roleMap[r]) { sessionRole = roleMap[r]; break; }
+    }
+
+    const user = await userService.ensureUser(email || 'unknown@example.com', { mfaSecret: config.userSeed.mfaSecret });
+    req.session.user = { ...userService.serializeForSession(user), role: sessionRole };
+    req.session.lastLoginAt = new Date().toISOString();
+
+    let redirectTo = '/dashboard';
+    if (sessionRole === 'reviewer') redirectTo = '/reviewers';
+    // Extend as routes are added for productOwner/admin
+
+    return res.json({ ok: true, redirectTo });
+  } catch (err) {
+    logger.error('Azure session establishment failed', { error: err.message });
+    return res.status(401).json({ ok: false, error: 'Unauthorized' });
+  }
+};
+
 const logout = (req, res, next) => {
-  // Regenerate the session to log out safely and still allow flash messaging
   req.session.regenerate((err) => {
     if (err) {
       logger.error('Failed to regenerate session on logout', { error: err.message });
@@ -59,5 +106,7 @@ module.exports = {
   login,
   showMfa,
   verifyMfa,
+  azureRedirectView,
+  azureSession,
   logout
 };

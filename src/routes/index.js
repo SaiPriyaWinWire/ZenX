@@ -1,10 +1,10 @@
-const express = require('express');
+﻿const express = require('express');
 const path = require('path');
 const authRoutes = require('./auth');
 const dashboardRoutes = require('./dashboard');
-const tqaRoutes = require('./tqa');
 
-const router = express.Router();
+
+const { ensureAuthenticated, ensureRole } = require('../middleware/authMiddleware');
 
 router.use(authRoutes);
 router.use(dashboardRoutes);
@@ -45,9 +45,9 @@ router.get('/login-demo', (req, res) => {
 });
 
 // Demo reviewers route: serve demo static assets and API under /reviewers
-router.get('/reviewers', (req, res) => {
-  // Serve the demo index (public/demo/index.html)
+router.get('/reviewers', ensureAuthenticated, ensureRole('reviewer'), (req, res) => {
   res.sendFile('demo/index.html', { root: path.resolve(__dirname, '../../public') });
+});
 });
 
 router.get('/reviewers/api/dashboard', (req, res) => {
@@ -85,3 +85,4 @@ router.get('/healthz', (req, res) => {
 });
 
 module.exports = router;
+
