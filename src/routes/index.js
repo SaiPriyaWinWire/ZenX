@@ -56,9 +56,7 @@ router.get('/reviewers/api/dashboard', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-  if (req.session.user) {
-    return res.redirect('/tqa/dashboard');
-  }
+  // Enforce login-first: always show the login page as the first view
   return res.redirect('/login');
 });
 
