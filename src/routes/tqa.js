@@ -1,4 +1,5 @@
 const express = require('express');
+const { ensureAuthenticated } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -15,12 +16,67 @@ const withSidebar = (req, res, next) => {
   next();
 };
 
-router.get('/tqa/dashboard', withSidebar, (req, res) => {
-  res.locals.pageTitle = 'Dashboard';
-  res.render('tqa/dashboard', { layout: 'layouts/main' });
+router.get('/tqa/dashboard', ensureAuthenticated, withSidebar, (req, res) => {
+  res.locals.pageTitle = 'Reviewer Dashboard';
+
+  const stats = [
+    { label: 'Pending', value: 5 },
+    { label: 'In Progress', value: 3 },
+    { label: 'High Risk', value: 2, tone: 'warning' },
+    { label: 'Ready', value: 4, tone: 'success' }
+  ];
+
+  const reviews = [
+    { project: 'Project Renet', status: 'Ready', reviewer: 'Detain Millet' },
+    { project: 'Project Alpha', status: 'Reject', reviewer: 'Enig Ailler' },
+    { project: 'Project Beta', status: 'Ready', reviewer: 'E. Rivera' }
+  ];
+
+  const checklist = [
+    { name: 'Architecture', score: 75, level: 'High' },
+    { name: 'Security', score: 60, level: 'Medium' },
+    { name: 'Performance', score: 45, level: 'Low' },
+    { name: 'Code Quality', score: 30, level: 'Low' },
+    { name: 'Release Readiness', score: 80, level: 'High' }
+  ];
+
+  const risk = {
+    totalScore: 64,
+    overallLevel: 'Medium',
+    recommendation: 'Not Ready'
+  };
+
+  const latestReport = {
+    riskSummary: 'High Risk',
+    findings: [
+      'Reviewers reported multiple issues before approval',
+      'Inconsistent security practices observed'
+    ],
+    recommendations: [
+      'Improve CI checks before approval',
+      'Address outstanding security issues'
+    ]
+  };
+
+  const auditLogs = [
+    { timestamp: '21.01.2020 16:07', user: 'Admin', action: 'Checklist Generated', details: '-' },
+    { timestamp: '21.01.2020 16:07', user: 'Admin', action: 'Risk Analysis Completed', details: '-' },
+    { timestamp: '21.01.2020 16:07', user: 'Reviewer', action: 'Decision Approved', details: '-' }
+  ];
+
+  res.render('tqa/dashboard', {
+    layout: 'layouts/main',
+    stats,
+    reviews,
+    checklist,
+    risk,
+    latestReport,
+    auditLogs,
+    lastLoginAt: req.session.lastLoginAt || null
+  });
 });
 
-router.get('/tqa/reviews', withSidebar, (req, res) => {
+router.get('/tqa/reviews', ensureAuthenticated, withSidebar, (req, res) => {
   res.locals.pageTitle = 'Project Alpha Review';
   const checklist = [
     { label: 'Architecture', score: 75, level: 'High' },
@@ -32,7 +88,7 @@ router.get('/tqa/reviews', withSidebar, (req, res) => {
   res.render('tqa/reviews', { layout: 'layouts/main', checklist });
 });
 
-router.get('/tqa/risk', withSidebar, (req, res) => {
+router.get('/tqa/risk', ensureAuthenticated, withSidebar, (req, res) => {
   res.locals.pageTitle = 'AI Risk Assessment';
   const scores = [
     { label: 'Architecture', score: 75, level: 'High' },
@@ -44,12 +100,12 @@ router.get('/tqa/risk', withSidebar, (req, res) => {
   res.render('tqa/risk', { layout: 'layouts/main', scores, total: 64, summary: 'HIGH', recommendation: 'NOT READY' });
 });
 
-router.get('/tqa/approvals', withSidebar, (req, res) => {
+router.get('/tqa/approvals', ensureAuthenticated, withSidebar, (req, res) => {
   res.locals.pageTitle = 'Approval & Decision';
   res.render('tqa/approvals', { layout: 'layouts/main' });
 });
 
-router.get('/tqa/reports', withSidebar, (req, res) => {
+router.get('/tqa/reports', ensureAuthenticated, withSidebar, (req, res) => {
   res.locals.pageTitle = 'Final Review Report';
   const findings = [
     'Resolves major issues before approval',
@@ -62,7 +118,7 @@ router.get('/tqa/reports', withSidebar, (req, res) => {
   res.render('tqa/reports', { layout: 'layouts/main', findings, recommendations, risk: 'High Risk' });
 });
 
-router.get('/tqa/audit', withSidebar, (req, res) => {
+router.get('/tqa/audit', ensureAuthenticated, withSidebar, (req, res) => {
   res.locals.pageTitle = 'Audit & Activity Logs';
   const logs = [
     { ts: '21 Jan 2020 16:07', user: 'Admin', action: 'Checklist Generated', details: '' },

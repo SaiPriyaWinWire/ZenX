@@ -84,7 +84,15 @@ const handleAzureCallback = async (req, res) => {
     req.session.lastLoginAt = new Date().toISOString();
     delete req.session.azureAuth;
     req.flash('success', 'Signed in successfully.');
-    return res.redirect('/dashboard');
+
+    const roleDestinations = {
+      reviewer: '/tqa/dashboard',
+      admin: '/admin/risk-config',
+      productOwner: '/dashboard'
+    };
+
+    const destination = roleDestinations[sessionState.role] || '/dashboard';
+    return res.redirect(destination);
   } catch (err) {
     logger.error('Failed to complete Azure AD sign in', { error: err.message });
     delete req.session.azureAuth;

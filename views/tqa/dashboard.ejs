@@ -1,46 +1,160 @@
-<section class="page-header">
-  <h1 class="page-header__title">Dashboard</h1>
-</section>
-
-<section class="grid">
-  <article class="panel">
-    <header class="panel__header">
-      <h2 class="panel__title">Quick Stats</h2>
-    </header>
-    <ul class="metrics">
-      <li class="metrics__item"><span class="metrics__value">5</span><span class="metrics__label">Pending</span></li>
-      <li class="metrics__item"><span class="metrics__value">3</span><span class="metrics__label">In Progress</span></li>
-      <li class="metrics__item"><span class="metrics__value metrics__value--warning">2</span><span class="metrics__label">High Risk</span></li>
-      <li class="metrics__item"><span class="metrics__value metrics__value--success">4</span><span class="metrics__label">Ready</span></li>
-    </ul>
-  </article>
-
-  <article class="panel">
-    <header class="panel__header">
-      <h2 class="panel__title">Recent Reviews</h2>
-    </header>
-    <table class="table">
-      <thead>
-        <tr><th>Project</th><th>Status</th><th>Reviewer</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Project Renet</td><td><span class="badge badge--danger">High</span></td><td>Admin</td></tr>
-        <tr><td>Project Alpha</td><td><span class="badge">Ready</span></td><td>Detain Nibet</td></tr>
-        <tr><td>Project Beta</td><td><span class="badge">Review</span></td><td>Enrip Aallier</td></tr>
-      </tbody>
-    </table>
-  </article>
-
-  <article class="panel">
-    <header class="panel__header">
-      <h2 class="panel__title">Risk Overview</h2>
-    </header>
-    <div class="risk-summary">
-      <div class="risk-summary__score">64</div>
-      <div class="risk-summary__details">
-        <p>Total risk score</p>
-        <span class="badge badge--danger">High</span>
-      </div>
+<section class="reviewer-dashboard" aria-label="Reviewer overview">
+  <header class="reviewer-dashboard__header">
+    <div>
+      <h1 class="reviewer-dashboard__title">Reviewer Dashboard</h1>
+      <p class="reviewer-dashboard__subtitle">Monitor assigned reviews, track overall risk, and finalize decisions in one workspace.</p>
     </div>
-  </article>
+    <div class="reviewer-dashboard__meta">
+      <span class="reviewer-chip">Team <strong><%= currentUser?.team || 'TQA' %></strong></span>
+      <span class="reviewer-chip">Signed in <strong><%= lastLoginAt ? new Date(lastLoginAt).toLocaleString() : 'just now' %></strong></span>
+    </div>
+  </header>
+
+  <div class="reviewer-grid">
+    <article class="reviewer-card reviewer-card--primary" aria-labelledby="card-overview">
+      <header class="reviewer-card__header">
+        <h2 id="card-overview" class="reviewer-card__title">Dashboard</h2>
+        <span class="reviewer-pill reviewer-pill--indigo">Reviews Snapshot</span>
+      </header>
+      <ul class="reviewer-stats" aria-label="Review status metrics">
+        <% stats.forEach((item) => { %>
+          <li class="reviewer-stats__item">
+            <span class="reviewer-stats__value reviewer-stats__value--<%= item.tone || 'default' %>"><%= item.value %></span>
+            <span class="reviewer-stats__label"><%= item.label %></span>
+          </li>
+        <% }) %>
+      </ul>
+      <section class="reviewer-section" aria-label="Recent reviews">
+        <h3 class="reviewer-section__title">Recent Reviews</h3>
+        <ul class="reviewer-list">
+          <% reviews.forEach((review) => { %>
+            <li class="reviewer-list__item">
+              <div>
+                <span class="reviewer-list__project"><%= review.project %></span>
+                <span class="reviewer-list__meta">Reviewer: <%= review.reviewer %></span>
+              </div>
+              <span class="reviewer-chip reviewer-chip--status"><%= review.status %></span>
+            </li>
+          <% }) %>
+        </ul>
+      </section>
+    </article>
+
+    <article class="reviewer-card reviewer-card--accent" aria-labelledby="card-alpha-review">
+      <header class="reviewer-card__header">
+        <h2 id="card-alpha-review" class="reviewer-card__title">Project Alpha Review</h2>
+        <span class="reviewer-pill reviewer-pill--teal">AI Checklist Analysis</span>
+      </header>
+      <table class="reviewer-table">
+        <thead>
+          <tr>
+            <th scope="col">Checklist Item</th>
+            <th scope="col">Score</th>
+            <th scope="col">Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% checklist.forEach((item) => { %>
+            <tr>
+              <td><%= item.name %></td>
+              <td><%= item.score %></td>
+              <td><span class="reviewer-pill reviewer-pill--soft"><%= item.level %></span></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <div class="reviewer-gauge">
+        <div class="reviewer-gauge__score"><%= risk.totalScore %></div>
+        <div class="reviewer-gauge__label">Overall risk high</div>
+      </div>
+    </article>
+
+    <article class="reviewer-card reviewer-card--risk" aria-labelledby="card-risk">
+      <header class="reviewer-card__header">
+        <h2 id="card-risk" class="reviewer-card__title">AI Risk Assessment</h2>
+        <span class="reviewer-pill reviewer-pill--amber">In-depth</span>
+      </header>
+      <dl class="reviewer-risk">
+        <div class="reviewer-risk__row">
+          <dt>Total Risk Score</dt>
+          <dd><span class="reviewer-risk__value"><%= risk.totalScore %></span></dd>
+        </div>
+        <div class="reviewer-risk__row">
+          <dt>Overall Risk Level</dt>
+          <dd><span class="reviewer-chip reviewer-chip--warning"><%= risk.overallLevel %></span></dd>
+        </div>
+        <div class="reviewer-risk__row">
+          <dt>Release Recommendation</dt>
+          <dd><span class="reviewer-chip reviewer-chip--danger"><%= risk.recommendation %></span></dd>
+        </div>
+      </dl>
+    </article>
+
+    <article class="reviewer-card reviewer-card--decision" aria-labelledby="card-decision">
+      <header class="reviewer-card__header">
+        <h2 id="card-decision" class="reviewer-card__title">Approval &amp; Decision</h2>
+        <span class="reviewer-pill reviewer-pill--emerald">Final Step</span>
+      </header>
+      <div class="reviewer-actions" role="group" aria-label="Decision actions">
+        <button class="reviewer-button reviewer-button--approve" type="button">Approve</button>
+        <button class="reviewer-button reviewer-button--changes" type="button">Request Changes</button>
+        <button class="reviewer-button reviewer-button--reject" type="button">Reject</button>
+      </div>
+      <label class="reviewer-field" for="decision-comments">
+        <span class="reviewer-field__label">Comments</span>
+        <textarea id="decision-comments" class="reviewer-field__control" rows="3" placeholder="Capture the rationale for your decision..."></textarea>
+      </label>
+      <button class="reviewer-button reviewer-button--ghost" type="button">Download Report</button>
+    </article>
+
+    <article class="reviewer-card reviewer-card--report" aria-labelledby="card-report">
+      <header class="reviewer-card__header">
+        <h2 id="card-report" class="reviewer-card__title">Project Alpha — Final Review Report</h2>
+        <span class="reviewer-pill reviewer-pill--purple"><%= latestReport.riskSummary %></span>
+      </header>
+      <section class="reviewer-section" aria-label="Key findings">
+        <h3 class="reviewer-section__title">Key Findings</h3>
+        <ul class="reviewer-bullets">
+          <% latestReport.findings.forEach((finding) => { %>
+            <li><%= finding %></li>
+          <% }) %>
+        </ul>
+      </section>
+      <section class="reviewer-section" aria-label="Recommendations">
+        <h3 class="reviewer-section__title">Recommendations</h3>
+        <ul class="reviewer-bullets reviewer-bullets--check">
+          <% latestReport.recommendations.forEach((rec) => { %>
+            <li><%= rec %></li>
+          <% }) %>
+        </ul>
+      </section>
+    </article>
+
+    <article class="reviewer-card reviewer-card--logs" aria-labelledby="card-audit">
+      <header class="reviewer-card__header">
+        <h2 id="card-audit" class="reviewer-card__title">Audit &amp; Activity Logs</h2>
+        <span class="reviewer-pill reviewer-pill--slate">Chronology</span>
+      </header>
+      <table class="reviewer-table reviewer-table--compact">
+        <thead>
+          <tr>
+            <th scope="col">Timestamp</th>
+            <th scope="col">User</th>
+            <th scope="col">Action</th>
+            <th scope="col">Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% auditLogs.forEach((entry) => { %>
+            <tr>
+              <td><%= entry.timestamp %></td>
+              <td><%= entry.user %></td>
+              <td><%= entry.action %></td>
+              <td><%= entry.details %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </article>
+  </div>
 </section>

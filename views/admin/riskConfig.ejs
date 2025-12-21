@@ -1,0 +1,116 @@
+<section class="risk-config" aria-labelledby="risk-config-heading">
+  <header class="risk-config__header">
+    <div>
+      <h1 id="risk-config-heading" class="risk-config__title">Risk Configuration</h1>
+      <p class="risk-config__subtitle">Adjust thresholds and weights for each risk dimension.</p>
+    </div>
+    <span class="risk-config__badge">Admin Workspace</span>
+  </header>
+
+  <div class="risk-config__card">
+    <form class="risk-config__form" novalidate>
+      <fieldset class="risk-config__fieldset" aria-describedby="weights-help">
+        <legend class="risk-config__legend">Weights</legend>
+        <p id="weights-help" class="risk-config__helper">Distribute emphasis across each review dimension.</p>
+        <div class="risk-config__grid risk-config__grid--two">
+          <label class="risk-config__field" for="weight-architecture">
+            <span class="risk-config__label">Architecture Weight (%)</span>
+            <input id="weight-architecture" class="risk-config__input" type="number" min="0" max="100" value="<%= weights.architecture %>">
+          </label>
+          <label class="risk-config__field" for="weight-security">
+            <span class="risk-config__label">Security Weight (%)</span>
+            <input id="weight-security" class="risk-config__input" type="number" min="0" max="100" value="<%= weights.security %>">
+          </label>
+          <label class="risk-config__field" for="weight-performance">
+            <span class="risk-config__label">Performance Weight (%)</span>
+            <input id="weight-performance" class="risk-config__input" type="number" min="0" max="100" value="<%= weights.performance %>">
+          </label>
+          <label class="risk-config__field" for="weight-code-quality">
+            <span class="risk-config__label">Code Quality Weight (%)</span>
+            <input id="weight-code-quality" class="risk-config__input" type="number" min="0" max="100" value="<%= weights.codeQuality %>">
+          </label>
+          <label class="risk-config__field" for="weight-release">
+            <span class="risk-config__label">Release Readiness Weight (%)</span>
+            <input id="weight-release" class="risk-config__input" type="number" min="0" max="100" value="<%= weights.releaseReadiness %>">
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="risk-config__fieldset" aria-describedby="ranges-help">
+        <legend class="risk-config__legend">Risk Ranges</legend>
+        <p id="ranges-help" class="risk-config__helper">Define thresholds for low, medium, and high risk scores.</p>
+        <div class="risk-config__grid risk-config__grid--three">
+          <div class="risk-config__range">
+            <h3 class="risk-config__range-title">Low Risk Range</h3>
+            <div class="risk-config__range-inputs">
+              <label class="risk-config__range-field" for="range-low-min">
+                <span class="risk-config__label">From</span>
+                <select id="range-low-min" class="risk-config__select">
+                  <% percentageOptions.forEach((value) => { %>
+                    <option value="<%= value %>" <%= value === ranges.low.min ? 'selected' : '' %>><%= value %></option>
+                  <% }) %>
+                </select>
+              </label>
+              <label class="risk-config__range-field" for="range-low-max">
+                <span class="risk-config__label">To</span>
+                <select id="range-low-max" class="risk-config__select">
+                  <% percentageOptions.forEach((value) => { %>
+                    <option value="<%= value %>" <%= value === ranges.low.max ? 'selected' : '' %>><%= value %></option>
+                  <% }) %>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="risk-config__range">
+            <h3 class="risk-config__range-title">Medium Risk Range</h3>
+            <div class="risk-config__range-inputs">
+              <label class="risk-config__range-field" for="range-medium-min">
+                <span class="risk-config__label">From</span>
+                <select id="range-medium-min" class="risk-config__select">
+                  <% percentageOptions.forEach((value) => { %>
+                    <option value="<%= value %>" <%= value === ranges.medium.min ? 'selected' : '' %>><%= value %></option>
+                  <% }) %>
+                </select>
+              </label>
+              <label class="risk-config__range-field" for="range-medium-max">
+                <span class="risk-config__label">To</span>
+                <select id="range-medium-max" class="risk-config__select">
+                  <% percentageOptions.forEach((value) => { %>
+                    <option value="<%= value %>" <%= value === ranges.medium.max ? 'selected' : '' %>><%= value %></option>
+                  <% }) %>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="risk-config__range">
+            <h3 class="risk-config__range-title">High Risk Range</h3>
+            <div class="risk-config__range-inputs">
+              <label class="risk-config__range-field" for="range-high-min">
+                <span class="risk-config__label">From</span>
+                <select id="range-high-min" class="risk-config__select">
+                  <% percentageOptions.forEach((value) => { %>
+                    <option value="<%= value %>" <%= value === ranges.high.min ? 'selected' : '' %>><%= value %></option>
+                  <% }) %>
+                </select>
+              </label>
+              <label class="risk-config__range-field" for="range-high-max">
+                <span class="risk-config__label">To</span>
+                <select id="range-high-max" class="risk-config__select">
+                  <% percentageOptions.forEach((value) => { %>
+                    <option value="<%= value %>" <%= value === ranges.high.max ? 'selected' : '' %>><%= value %></option>
+                  <% }) %>
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="risk-config__actions">
+        <button type="button" class="risk-config__button">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</section>
