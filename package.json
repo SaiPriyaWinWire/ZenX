@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon src/app.js",
     "start": "node src/app.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build": "echo \"No build step required for this app\""
   },
   "engines": {
     "node": ">=18.0.0"
